@@ -3,12 +3,14 @@
 /**
  * Module dependencies.
  */
-
 import {app} from '../app'
-const debug = require('debug')('api-dfi:server');
-const http = require('http');
+import Debug from 'debug';
+import http from 'http';
+import * as dotenv from "dotenv";
 
-require('dotenv').config();
+const debug = Debug('api-dfi:server');
+
+dotenv.config();
 
 /**
  * Get port from environment and store in Express.
@@ -87,6 +89,6 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
-    : 'port ' + addr.port;
+    : 'port ' + addr?.port;
   debug('Listening on ' + bind);
 }

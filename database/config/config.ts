@@ -23,15 +23,4 @@ const sequelize = new Sequelize(dbName, username, password, {
   },
 });
 
-const openConnection = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-};
-
-openConnection();
-
-export { sequelize as dbConnection, openConnection };
+export { sequelize as dbConnection };

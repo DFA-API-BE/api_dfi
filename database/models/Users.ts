@@ -4,10 +4,23 @@ import { dbConnection } from '../config/config';
 class Users extends Model {}
 
 Users.init({
-  name: DataTypes.STRING,
-  email: DataTypes.STRING,
-  password: DataTypes.STRING,
-  isActive: DataTypes.STRING,
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  isActive: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   profilePic: DataTypes.STRING
 },{
   sequelize: dbConnection,

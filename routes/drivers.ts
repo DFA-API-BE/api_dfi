@@ -1,11 +1,11 @@
 import express from 'express';
-import { dbTest } from '../database/models/dbTest';
+import { Drivers } from '../database/models/Drivers';
 const router = express.Router();
 
 /* GET example router. */
 router.get('/', async function (req, res) {
   try {
-    const dbTestData = await dbTest.findAll();
+    const dbTestData = await Drivers.findAll();
     res.send(dbTestData);
   } catch (e) {
     console.log(e)
@@ -13,4 +13,4 @@ router.get('/', async function (req, res) {
   }
 });
 
-export { router as testsRouter };
+export { router as driversRouter };

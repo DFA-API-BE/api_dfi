@@ -14,18 +14,31 @@ function checkToken(
   console.log('auth check');
   const authHeader = req.get('Authorization');
   if (authHeader) {
-    jwt.verify(authHeader, JWT_SECRET_KEY, (err, user) => {
-      if (err) {
-        responseHandler({
-          res,
-          statusCode: 403,
-          message: err.message,
-        });
-      } else {
-        req.user = user;
-        next();
-      }
-    });
+    try {
+      const decoded = jwt.verify(authHeader, JWT_SECRET_KEY);
+      req.user = decoded;
+      next();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      responseHandler({
+        res,
+        statusCode: 403,
+        message: e.message,
+      });
+    }
+    // jwt.verify(authHeader, JWT_SECRET_KEY, (err, user) => {
+    //   if (err) {
+    //     responseHandler({
+    //       res,
+    //       statusCode: 403,
+    //       message: err.message,
+    //     });
+    //   } else {
+    //     const payload = jwt.decode(user)
+    //     req.user = user;
+    //     next();
+    //   }
+    // });
   } else {
     responseHandler({
       res,

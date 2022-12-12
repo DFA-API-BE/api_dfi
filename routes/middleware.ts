@@ -26,19 +26,6 @@ function checkToken(
         message: e.message,
       });
     }
-    // jwt.verify(authHeader, JWT_SECRET_KEY, (err, user) => {
-    //   if (err) {
-    //     responseHandler({
-    //       res,
-    //       statusCode: 403,
-    //       message: err.message,
-    //     });
-    //   } else {
-    //     const payload = jwt.decode(user)
-    //     req.user = user;
-    //     next();
-    //   }
-    // });
   } else {
     responseHandler({
       res,

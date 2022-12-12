@@ -10,7 +10,7 @@ router.use('/vehicles', checkToken, vehiclesRoutes);
 router.use('/auth', authRouter);
 /* GET home page. */
 router.get("/", function (req, res) {
-  res.render("index", { title: "Express" });
+  res.send({ title: "DFA API Services" });
 });
 
 

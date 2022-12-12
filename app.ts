@@ -26,6 +26,7 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
+
 // error handler
 const errorHandler: ErrorRequestHandler = (err, req, res) => {
   // set locals, only providing error in development

@@ -1,6 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import { dbConnection } from '../config/config';
 
+export type VehicleData = {
+  code: string,
+  siteCode: string,
+};
 class Vehicles extends Model {}
 
 Vehicles.init({

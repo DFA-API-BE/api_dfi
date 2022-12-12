@@ -30,7 +30,7 @@ function checkToken(
     responseHandler({
       res,
       statusCode: 403,
-      message: 'user unauthorized',
+      message: 'route unauthorized',
     });
   }
 }

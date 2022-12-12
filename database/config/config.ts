@@ -8,6 +8,7 @@ const username = process.env.DB_USER || '';
 const password = process.env.DB_PASSWORD || '';
 const dbName = process.env.DB_NAME || '';
 const dbPort = process.env.DB_PORT || '';
+console.log(host)
 
 const sequelize = new Sequelize(dbName, username, password, {
   dialect: 'mssql',

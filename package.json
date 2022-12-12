@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=api-dfi:* node dist/bin/www",
+    "start": "DEBUG=* node dist/bin/www",
     "dev": "DEBUG=api-dfi:* nodemon ./bin/www.ts",
     "prepare": "husky install",
     "pre-commit": "lint-staged",

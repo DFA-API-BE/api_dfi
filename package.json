@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "tsc && node dist/bin/www",
+    "start": "node dist/bin/www",
     "dev": "DEBUG=api-dfi:* nodemon ./bin/www.ts",
     "prepare": "husky install",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "postinstall": "tsc"
   },
   "lint-staged": {
     "**/*.(ts|tsx|js|jsx|json)": [

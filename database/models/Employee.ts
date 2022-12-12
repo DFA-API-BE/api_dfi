@@ -2,6 +2,12 @@ import { DataTypes, Model } from 'sequelize';
 import { dbConnection } from '../config/config';
 import { Users } from './Users';
 
+export type EmployeeData = {
+  code: string;
+  siteCode: string;
+  type: string;
+  userId: number;
+};
 class Employees extends Model {}
 
 Employees.init(
@@ -39,8 +45,8 @@ Employees.init(
   },
 );
 
-Employees.belongsTo(Users,{
+Employees.belongsTo(Users, {
   foreignKey: 'userId',
-  as: 'user' // this determines the name in `associations`!
+  as: 'user', // this determines the name in `associations`!
 });
 export { Employees };

@@ -1,26 +1,14 @@
 import { Request, Response } from 'express';
-import { Vehicles } from '../database/models/Vehicles';
+import { Vehicles, VehicleData } from '../database/models/Vehicles';
 import Joi from 'joi';
+import { UserRequest } from '../domain/user';
 import { responseHandler } from '../utils/responseHandler';
-
-type VehicleRequest = {
-  code: string;
-  siteCode: string;
-};
+import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 
 const vehicleSchema = Joi.object().keys({
   code: Joi.string().required(),
   siteCode: Joi.string().required(),
 });
-
-const statusCodeRenderer = (status: string) => {
-  switch (status) {
-    case 'EREQUEST':
-      return 400;
-    default:
-      return 500;
-  }
-};
 
 const getVehicles = async (req: Request, res: Response) => {
   try {
@@ -31,10 +19,10 @@ const getVehicles = async (req: Request, res: Response) => {
       message: 'Get All Vehicles Success',
       data,
     });
-  } catch (e:any) {
+  } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
@@ -44,11 +32,17 @@ const getVehicles = async (req: Request, res: Response) => {
 };
 
 const storeVehicles = async (
-  req: Omit<Request, 'body'> & { body: VehicleRequest },
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<never, never, VehicleData, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
   res: Response,
 ) => {
   try {
-    const name = 'yusuf';
+    const { name } = req.user as UserRequest;
     const validationVehicleSchema = vehicleSchema.validate(req.body);
     if (validationVehicleSchema.error) {
       responseHandler({
@@ -71,7 +65,7 @@ const storeVehicles = async (
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
@@ -81,12 +75,18 @@ const storeVehicles = async (
 };
 
 const updateVehicles = async (
-  req: Omit<Request, 'body'> & { body: VehicleRequest },
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<{ id: string }, never, VehicleData, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
   res: Response,
 ) => {
   try {
-    const name = 'yusuf';
-    const id : string = req.params.id;
+    const { name } = req.user as UserRequest;
+    const id: string = req.params.id;
     const validationVehicleSchema = vehicleSchema.validate(req.body);
     if (validationVehicleSchema.error) {
       responseHandler({
@@ -96,9 +96,9 @@ const updateVehicles = async (
       });
     }
     const vehicle = await Vehicles.findOne({
-      where:{
-        id:id
-      }
+      where: {
+        id: id,
+      },
     });
     if (vehicle === null) {
       responseHandler({
@@ -106,10 +106,10 @@ const updateVehicles = async (
         statusCode: 404,
         message: 'vehicle not found',
       });
-    }else {
-     await vehicle.update({
+    } else {
+      await vehicle.update({
         ...req.body,
-        updatedBy:name
+        updatedBy: name,
       });
       responseHandler({
         res,
@@ -117,11 +117,10 @@ const updateVehicles = async (
         data: vehicle,
       });
     }
-   
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
@@ -130,14 +129,13 @@ const updateVehicles = async (
   }
 };
 
-
-const deleteVehicles = async (req:Request,res:Response) => {
+const deleteVehicles = async (req: Request, res: Response) => {
   try {
-    const id:string = req.params.id;
+    const id: string = req.params.id;
     const vehicle = await Vehicles.findOne({
-      where:{
-        id:id
-      }
+      where: {
+        id: id,
+      },
     });
     if (vehicle === null) {
       responseHandler({
@@ -145,22 +143,22 @@ const deleteVehicles = async (req:Request,res:Response) => {
         statusCode: 404,
         message: 'vehicle not found',
       });
-    }else {
-     await vehicle.destroy()
+    } else {
+      await vehicle.destroy();
       responseHandler({
         res,
         message: 'Delete Vehicle Success!',
       });
     }
-  } catch (e:any) {
+  } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
       }),
     });
   }
-}
-export default { getVehicles, storeVehicles,updateVehicles,deleteVehicles };
+};
+export default { getVehicles, storeVehicles, updateVehicles, deleteVehicles };

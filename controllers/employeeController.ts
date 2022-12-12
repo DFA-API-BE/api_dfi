@@ -1,15 +1,12 @@
 import { Request, Response } from 'express';
-import { Employees } from '../database/models/Employee';
+import { Employees, EmployeeData } from '../database/models/Employee';
 import Joi from 'joi';
+import { UserRequest } from '../domain/user';
 import { responseHandler } from '../utils/responseHandler';
 import { Users } from '../database/models/Users';
+import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 
-type EmployeeRequest = {
-  code: string;
-  siteCode: string;
-  type: string;
-  userId: number;
-};
+
 
 const employeeSchema = Joi.object().keys({
   code: Joi.string().required(),
@@ -18,14 +15,6 @@ const employeeSchema = Joi.object().keys({
   userId: Joi.number().required(),
 });
 
-const statusCodeRenderer = (status: string) => {
-  switch (status) {
-    case 'EREQUEST':
-      return 400;
-    default:
-      return 500;
-  }
-};
 
 const getEmployees = async (req: Request, res: Response) => {
   try {
@@ -51,19 +40,27 @@ const getEmployees = async (req: Request, res: Response) => {
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: 400,
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.message,
+      message: e.errors.map((err: any) => {
+        return `${err.value} is ${err.validatorKey}`;
+      }),
     });
   }
 };
 
 const storeEmployees = async (
-  req: Omit<Request, 'body'> & { body: EmployeeRequest },
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<never, never, EmployeeData, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
   res: Response,
 ) => {
   try {
-    const name = 'yusuf';
+    const {name} = req.user as UserRequest;
 
     const validationEmployeeSchema = employeeSchema.validate(req.body);
     if (validationEmployeeSchema.error) {
@@ -87,7 +84,7 @@ const storeEmployees = async (
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
@@ -97,11 +94,18 @@ const storeEmployees = async (
 };
 
 const updateEmployees = async (
-  req: Omit<Request, 'body'> & { body: EmployeeRequest },
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<{id:string}, never, EmployeeData, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
   res: Response,
 ) => {
   try {
-    const name = 'yusuf';
+    const {name} = req.user as UserRequest;
+    
     const id: string = req.params.id;
     const validationemployeeSchema = employeeSchema.validate(req.body);
     if (validationemployeeSchema.error) {
@@ -136,7 +140,7 @@ const updateEmployees = async (
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;
@@ -169,7 +173,7 @@ const deleteEmployees = async (req: Request, res: Response) => {
   } catch (e: any) {
     responseHandler({
       res: res,
-      statusCode: statusCodeRenderer(e.parent.code),
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message: e.errors.map((err: any) => {
         return `${err.value} is ${err.validatorKey}`;

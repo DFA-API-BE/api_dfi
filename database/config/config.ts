@@ -20,9 +20,8 @@ const sequelize = new Sequelize(dbName, username, password, {
       useUTC: false,
       dateFirst: 1,
     },
-    encrypt: false,
-    trustServerCertificate: true,
   },
+  
 });
 
 export { sequelize as dbConnection };

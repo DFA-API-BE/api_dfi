@@ -21,6 +21,7 @@ const sequelize = new Sequelize(dbName, username, password, {
       dateFirst: 1,
     },
   },
+  
 });
 
 export { sequelize as dbConnection };

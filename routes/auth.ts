@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs';
 import { responseHandler } from '../utils/responseHandler';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import { checkToken } from './middleware';
+import userController from '../controllers/userController';
 
 dotenv.config();
 
@@ -154,4 +156,5 @@ router.post(
   },
 );
 
+router.get('/me',checkToken, userController.getUser);
 export { router as authRouter };

@@ -13,14 +13,14 @@ const vehicleSchema = Joi.object().keys({
 const getVehicles = async (req: Request, res: Response) => {
   try {
     const data = await Vehicles.findAll();
-    responseHandler({
+    return responseHandler({
       res,
       statusCode: 200,
       message: 'Get All Vehicles Success',
       data,
     });
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +45,7 @@ const storeVehicles = async (
     const { name } = req.user as UserRequest;
     const validationVehicleSchema = vehicleSchema.validate(req.body);
     if (validationVehicleSchema.error) {
-      responseHandler({
+      return responseHandler({
         res,
         message: validationVehicleSchema.error.message,
         statusCode: 400,
@@ -57,13 +57,13 @@ const storeVehicles = async (
       isActive: 1,
     });
 
-    responseHandler({
+    return responseHandler({
       res,
       message: 'Create Vehicle Success!',
       data: storeVehicle,
     });
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +89,7 @@ const updateVehicles = async (
     const id: string = req.params.id;
     const validationVehicleSchema = vehicleSchema.validate(req.body);
     if (validationVehicleSchema.error) {
-      responseHandler({
+      return responseHandler({
         res,
         message: validationVehicleSchema.error.message,
         statusCode: 400,
@@ -101,7 +101,7 @@ const updateVehicles = async (
       },
     });
     if (vehicle === null) {
-      responseHandler({
+      return responseHandler({
         res,
         statusCode: 404,
         message: 'vehicle not found',
@@ -111,14 +111,14 @@ const updateVehicles = async (
         ...req.body,
         updatedBy: name,
       });
-      responseHandler({
+      return responseHandler({
         res,
         message: 'Update Vehicle Success!',
         data: vehicle,
       });
     }
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -138,20 +138,20 @@ const deleteVehicles = async (req: Request, res: Response) => {
       },
     });
     if (vehicle === null) {
-      responseHandler({
+      return responseHandler({
         res,
         statusCode: 404,
         message: 'vehicle not found',
       });
     } else {
       await vehicle.destroy();
-      responseHandler({
+      return responseHandler({
         res,
         message: 'Delete Vehicle Success!',
       });
     }
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

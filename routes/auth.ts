@@ -50,7 +50,7 @@ router.post(
     try {
       const validateRegisterSchema = registerSchema.validate(req.body);
       if (validateRegisterSchema.error) {
-        responseHandler({
+        return responseHandler({
           res: res,
           message: validateRegisterSchema.error.message,
           statusCode: 400,
@@ -66,10 +66,10 @@ router.post(
         password: hashedPassword,
         isActive: 1,
       });
-      responseHandler({ res: res, message: 'success', data: {} });
+      return responseHandler({ res: res, message: 'success', data: {} });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      responseHandler({
+      return responseHandler({
         res: res,
         statusCode: statusCodeRenderer(e.parent.code),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,7 +90,7 @@ router.post(
     try {
       const validateLoginSchema = loginSchema.validate(req.body);
       if (validateLoginSchema.error) {
-        responseHandler({
+        return responseHandler({
           res,
           message: validateLoginSchema.error.message,
           statusCode: 400,
@@ -102,7 +102,7 @@ router.post(
         },
       });
       if (findUser === null) {
-        responseHandler({
+        return responseHandler({
           res,
           statusCode: 404,
           message: 'user not found',
@@ -112,7 +112,7 @@ router.post(
           .compare(req.body.password, findUser.dataValues.password)
           .then((result) => result);
         if (!isPasswordCorrect) {
-          responseHandler({
+          return responseHandler({
             res,
             statusCode: 422,
             message: 'wrong password',
@@ -132,13 +132,13 @@ router.post(
             },
             (error, token) => {
               if (error) {
-                responseHandler({
+                return responseHandler({
                   res,
                   statusCode: 422,
                   message: error.message,
                 });
               } else {
-                responseHandler({
+                return responseHandler({
                   res,
                   data: { token: token },
                 });

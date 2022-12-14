@@ -27,7 +27,7 @@ const checkIn = async (
 
   const validationCheckInSchema = checkinSchema.validate(req.body);
   if (validationCheckInSchema.error) {
-    responseHandler({
+    return responseHandler({
       res,
       message: validationCheckInSchema.error.message,
       statusCode: 400,
@@ -39,14 +39,14 @@ const checkIn = async (
         userId: id as number,
       });
 
-      responseHandler({
+      return responseHandler({
         res,
         message: 'CheckIn Success!',
         data: storeEmployee,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      responseHandler({
+      return responseHandler({
         res: res,
         statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

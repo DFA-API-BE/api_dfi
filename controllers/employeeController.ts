@@ -31,14 +31,14 @@ const getEmployees = async (req: Request, res: Response) => {
         },
       ],
     });
-    responseHandler({
+    return responseHandler({
       res,
       statusCode: 200,
       message: `Get All Employees ${req.query.type} Success`,
       data,
     });
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +64,7 @@ const storeEmployees = async (
 
     const validationEmployeeSchema = employeeSchema.validate(req.body);
     if (validationEmployeeSchema.error) {
-      responseHandler({
+      return responseHandler({
         res,
         message: validationEmployeeSchema.error.message,
         statusCode: 400,
@@ -76,13 +76,13 @@ const storeEmployees = async (
       isActive: 1,
     });
 
-    responseHandler({
+    return responseHandler({
       res,
       message: 'Create Employee Success!',
       data: storeEmployee,
     });
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,7 +109,7 @@ const updateEmployees = async (
     const id: string = req.params.id;
     const validationemployeeSchema = employeeSchema.validate(req.body);
     if (validationemployeeSchema.error) {
-      responseHandler({
+      return responseHandler({
         res,
         message: validationemployeeSchema.error.message,
         statusCode: 400,
@@ -121,7 +121,7 @@ const updateEmployees = async (
       },
     });
     if (employee === null) {
-      responseHandler({
+      return responseHandler({
         res,
         statusCode: 404,
         message: 'Employee not found',
@@ -131,14 +131,14 @@ const updateEmployees = async (
         ...req.body,
         updatedBy: name,
       });
-      responseHandler({
+      return responseHandler({
         res,
         message: 'Update EMployee Success!',
         data: employee,
       });
     }
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,20 +158,20 @@ const deleteEmployees = async (req: Request, res: Response) => {
       },
     });
     if (employee === null) {
-      responseHandler({
+      return responseHandler({
         res,
         statusCode: 404,
         message: 'Employee not found',
       });
     } else {
       await employee.destroy();
-      responseHandler({
+      return responseHandler({
         res,
         message: 'Delete Employee Success!',
       });
     }
   } catch (e: any) {
-    responseHandler({
+    return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

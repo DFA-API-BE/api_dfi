@@ -6,6 +6,7 @@ import { responseHandler } from '../utils/responseHandler';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 
+
 dotenv.config();
 
 type RegisterRequest = {
@@ -153,5 +154,6 @@ router.post(
     }
   },
 );
+
 
 export { router as authRouter };

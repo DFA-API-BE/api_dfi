@@ -1,7 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 
 type UserRequest = {
-  id: number | undefined;
+  id: number;
   name: string;
   email: string;
 } & JwtPayload;

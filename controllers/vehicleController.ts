@@ -9,6 +9,9 @@ const vehicleSchema = Joi.object().keys({
   code: Joi.string().required(),
   siteCode: Joi.string().required(),
 });
+const updateParamsschema = Joi.object().keys({
+  id: Joi.number().required()
+})
 
 const getVehicles = async (req: Request, res: Response) => {
   try {
@@ -19,6 +22,7 @@ const getVehicles = async (req: Request, res: Response) => {
       message: 'Get All Vehicles Success',
       data,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -62,6 +66,7 @@ const storeVehicles = async (
       message: 'Create Vehicle Success!',
       data: storeVehicle,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -86,7 +91,9 @@ const updateVehicles = async (
 ) => {
   try {
     const { name } = req.user as UserRequest;
-    const id: string = req.params.id;
+    const params = {
+      id: parseInt(req.params.id)
+    }
     const validationVehicleSchema = vehicleSchema.validate(req.body);
     if (validationVehicleSchema.error) {
       return responseHandler({
@@ -95,9 +102,17 @@ const updateVehicles = async (
         statusCode: 400,
       });
     }
+    const validationUpdateParams = updateParamsschema.validate(params);
+    if(validationUpdateParams.error){
+      return responseHandler({
+        res,
+        message: validationUpdateParams.error.message,
+        statusCode: 400
+      })
+    }
     const vehicle = await Vehicles.findOne({
       where: {
-        id: id,
+        id: params.id,
       },
     });
     if (vehicle === null) {
@@ -117,6 +132,7 @@ const updateVehicles = async (
         data: vehicle,
       });
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -150,6 +166,7 @@ const deleteVehicles = async (req: Request, res: Response) => {
         message: 'Delete Vehicle Success!',
       });
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,

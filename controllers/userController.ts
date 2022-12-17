@@ -29,6 +29,7 @@ const getUser = async (
       message: 'Detail User Success!',
       data: user,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,

@@ -1,6 +1,6 @@
 import { PickingDetails } from "../PickingDetail";
 import { PickingDetailProducts } from "../PickingDetailProduct";
-import { PickingLists } from "../pickingList";
+import { PickingLists } from "../PickingList";
 
 PickingLists.hasMany(PickingDetails,{
   foreignKey:"pickingId",

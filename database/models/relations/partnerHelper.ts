@@ -11,4 +11,4 @@ PartnerHelpers.belongsTo(Partners, {
   as: 'partner', // this determines the name in `associations`!
 });
 
-export {PartnerHelpers as PartnerHelperRelation}
+export {PartnerHelpers as PartnerHelpersRelation}

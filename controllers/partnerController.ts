@@ -7,6 +7,8 @@ import { Users } from '../database/models/Users';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 import { PartnerHelpers } from '../database/models/PartnerHelper';
 import { Vehicles } from '../database/models/Vehicles';
+import { PartnersRelation } from '../database/models/relations/partner';
+import { PartnerHelpersRelation } from '../database/models/relations/partnerHelper';
 
 const partnerSchema = Joi.object().keys({
   vehicleId: Joi.number().required(),
@@ -25,25 +27,26 @@ const getPartner = async (
 ) => {
   try {
     const { id } = req.user as UserRequest;
-    const data = await Partners.findOne({
+    const data = await PartnersRelation.findOne({
       where: {
         driverId: id,
       },
       include: [
         {
-          model: PartnerHelpers,
+          model: PartnerHelpersRelation,
+          as: 'helpers',
           include: [
             {
               model: Users,
-              as: 'user',
+              as: 'helper',
               attributes: ['name'],
             },
           ],
         },
         {
           model: Users,
-          as: 'user',
-          attributes: ['name'],
+          as: 'driver',
+          attributes: ['name','profilePic'],
         },
         {
           model: Vehicles,
@@ -63,7 +66,9 @@ const getPartner = async (
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.message,
+      message: e.errors.map((err: any) => {
+        return `${err.value} is ${err.validatorKey}`;
+      }),
     });
   }
 };
@@ -121,7 +126,7 @@ const storePartners = async (
 const updatePartner = async (
   req: Omit<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Request<{id:string}, never, PartnerData, never, Record<string, any>>,
+    Request<{ id: string }, never, PartnerData, never, Record<string, any>>,
     'user'
   > & {
     user?: UserRequest;
@@ -208,5 +213,5 @@ const updatePartner = async (
 export default {
   getPartner,
   storePartners,
-  updatePartner
+  updatePartner,
 };

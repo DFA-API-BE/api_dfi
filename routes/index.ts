@@ -5,12 +5,14 @@ import { vehiclesRoutes } from './vehicles';
 import { checkToken } from './middleware';
 import { employeesRoutes } from './employees';
 import { attendanceRoute } from './attendance';
+import { partnerRoutes } from './partner';
 const router = express.Router();
 
 router.use('/users', checkToken, usersRouter);
 router.use('/vehicles', checkToken, vehiclesRoutes);
 router.use('/employees', checkToken, employeesRoutes);
 router.use('/checkIn',checkToken, attendanceRoute)
+router.use('/partners',checkToken, partnerRoutes)
 router.use('/auth', authRouter);
 /* GET home page. */
 router.get("/", function (req, res) {

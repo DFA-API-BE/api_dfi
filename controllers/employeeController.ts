@@ -6,15 +6,15 @@ import { responseHandler } from '../utils/responseHandler';
 import { Users } from '../database/models/Users';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 
-
-
 const employeeSchema = Joi.object().keys({
   code: Joi.string().required(),
   siteCode: Joi.string().required(),
   type: Joi.string().required(),
   userId: Joi.number().required(),
 });
-
+const updateParamsschema = Joi.object().keys({
+  id: Joi.number().required()
+})
 
 const getEmployees = async (req: Request, res: Response) => {
   try {
@@ -37,6 +37,7 @@ const getEmployees = async (req: Request, res: Response) => {
       message: `Get All Employees ${req.query.type} Success`,
       data,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -81,6 +82,7 @@ const storeEmployees = async (
       message: 'Create Employee Success!',
       data: storeEmployee,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -105,8 +107,17 @@ const updateEmployees = async (
 ) => {
   try {
     const {name} = req.user as UserRequest;
-    
-    const id: string = req.params.id;
+    const params = {
+      id: req.params.id
+    }
+    const validationUpdateParams = updateParamsschema.validate(params);
+    if(validationUpdateParams.error){
+      return responseHandler({
+        res,
+        message: validationUpdateParams.error.message,
+        statusCode: 400
+      })
+    }
     const validationemployeeSchema = employeeSchema.validate(req.body);
     if (validationemployeeSchema.error) {
       return responseHandler({
@@ -117,7 +128,7 @@ const updateEmployees = async (
     }
     const employee = await Employees.findOne({
       where: {
-        id: id,
+        id: params.id,
       },
     });
     if (employee === null) {
@@ -137,6 +148,7 @@ const updateEmployees = async (
         data: employee,
       });
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -170,6 +182,7 @@ const deleteEmployees = async (req: Request, res: Response) => {
         message: 'Delete Employee Success!',
       });
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,

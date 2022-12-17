@@ -4,5 +4,6 @@ const router = express.Router();
 
 router.get('/', partnerController.getPartner);
 router.post('/', partnerController.storePartners);
+router.put('/:id', partnerController.updatePartner);
 
 export { router as partnerRoutes };

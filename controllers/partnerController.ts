@@ -118,61 +118,60 @@ const storePartners = async (
   }
 };
 
-// const updateEmployees = async (
-//   req: Omit<
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     Request<{ id: string }, never, EmployeeData, never, Record<string, any>>,
-//     'user'
-//   > & {
-//     user?: UserRequest;
-//   },
-//   res: Response,
-// ) => {
-//   try {
-//     const { name } = req.user as UserRequest;
+const updatePartner = async (
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<{id:string}, never, PartnerData, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
+  res: Response,
+) => {
+  try {
+    const id: string = req.params.id;
 
-//     const id: string = req.params.id;
-//     const validationemployeeSchema = employeeSchema.validate(req.body);
-//     if (validationemployeeSchema.error) {
-//       return responseHandler({
-//         res,
-//         message: validationemployeeSchema.error.message,
-//         statusCode: 400,
-//       });
-//     }
-//     const employee = await Employees.findOne({
-//       where: {
-//         id: id,
-//       },
-//     });
-//     if (employee === null) {
-//       return responseHandler({
-//         res,
-//         statusCode: 404,
-//         message: 'Employee not found',
-//       });
-//     } else {
-//       await employee.update({
-//         ...req.body,
-//         updatedBy: name,
-//       });
-//       return responseHandler({
-//         res,
-//         message: 'Update EMployee Success!',
-//         data: employee,
-//       });
-//     }
-//   } catch (e: any) {
-//     return responseHandler({
-//       res: res,
-//       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
-//       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//       message: e.errors.map((err: any) => {
-//         return `${err.value} is ${err.validatorKey}`;
-//       }),
-//     });
-//   }
-// };
+    const partner = await Partners.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (req.body.vehicleId) {
+      await partner?.update({
+        vehicleId: req.body.vehicleId,
+      });
+    }
+    if (req.body.helpers) {
+      await PartnerHelpers.destroy({
+        where: {
+          partnerId: partner?.dataValues.id,
+        },
+      });
+      const data: Array<{ partnerId: number; helperId: number }> = [];
+      req.body.helpers.forEach((e) => {
+        data.push({
+          partnerId: partner?.dataValues.id,
+          helperId: e,
+        });
+      });
+      PartnerHelpers.bulkCreate(data);
+    }
+    return responseHandler({
+      res,
+      message: 'Update Partner Success!',
+      data: partner,
+    });
+  } catch (e: any) {
+    return responseHandler({
+      res: res,
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message: e.errors.map((err: any) => {
+        return `${err.value} is ${err.validatorKey}`;
+      }),
+    });
+  }
+};
 
 // const deleteEmployees = async (req: Request, res: Response) => {
 //   try {
@@ -209,4 +208,5 @@ const storePartners = async (
 export default {
   getPartner,
   storePartners,
+  updatePartner
 };

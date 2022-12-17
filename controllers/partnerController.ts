@@ -12,7 +12,11 @@ import { PartnerHelpersRelation } from '../database/models/relations/partnerHelp
 
 const partnerSchema = Joi.object().keys({
   vehicleId: Joi.number().required(),
-  helpers: Joi.required(),
+  helpers: Joi.array().min(1).required,
+});
+const partnerUpdateSchema = Joi.object().keys({
+  helpers: Joi.array().min(1),
+  vehicleId: Joi.number().integer()
 });
 
 const getPartner = async (
@@ -86,11 +90,11 @@ const storePartners = async (
   try {
     const { id } = req.user as UserRequest;
 
-    const validationEmployeeSchema = partnerSchema.validate(req.body);
-    if (validationEmployeeSchema.error) {
+    const validationPartnerSchema = partnerSchema.validate(req.body);
+    if (validationPartnerSchema.error) {
       return responseHandler({
         res,
-        message: validationEmployeeSchema.error.message,
+        message: validationPartnerSchema.error.message,
         statusCode: 400,
       });
     }
@@ -134,6 +138,15 @@ const updatePartner = async (
   res: Response,
 ) => {
   try {
+
+    const validationPartnerSchema = partnerUpdateSchema.validate(req.body);
+    if (validationPartnerSchema.error) {
+      return responseHandler({
+        res,
+        message: validationPartnerSchema.error.message,
+        statusCode: 400,
+      });
+    }
     const id: string = req.params.id;
 
     const partner = await Partners.findOne({

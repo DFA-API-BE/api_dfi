@@ -1,6 +1,14 @@
 import { DataTypes, Model } from 'sequelize';
 import { dbConnection } from '../config/config';
 
+export type PickingDetailProductData = {
+  productName: string,
+  UOMSmallestSell: number,
+  isiKoliSmallestSell: number,
+  qtySmallReal: number,
+  qtyBig: number,
+  qtySmall: number,
+}
 class PickingDetailProducts extends Model {}
 
 PickingDetailProducts.init(

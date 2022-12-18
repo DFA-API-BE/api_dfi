@@ -1,23 +1,27 @@
-import { PickingDetails } from "../PickingDetail";
-import { PickingDetailProducts } from "../PickingDetailProduct";
-import { PickingLists } from "../PickingList";
+import { PickingDetails } from '../PickingDetail';
+import { PickingDetailProducts } from '../PickingDetailProduct';
+import { PickingLists } from '../PickingList';
 
-PickingLists.hasMany(PickingDetails,{
-  foreignKey:"pickingId",
-  as:"pickingdetails"
+PickingLists.hasMany(PickingDetails, {
+  foreignKey: 'pickingId',
+  as: 'pickingdetails',
 });
-PickingLists.hasMany(PickingDetailProducts,{
-  foreignKey:"pickingId",
-  as:"pickingdetailproducts"
-});
-
-PickingDetails.belongsTo(PickingLists,{
-  foreignKey:"pickingId",
-  as:"pickinglist"
+PickingLists.hasMany(PickingDetailProducts, {
+  foreignKey: 'pickingId',
+  as: 'pickingdetailproducts',
 });
 
-PickingDetails.hasMany(PickingDetailProducts,{
-  foreignKey:"pickingDetailId",
-  as:"pickingdetailproducts"
+PickingDetails.belongsTo(PickingLists, {
+  foreignKey: 'pickingId',
+  as: 'pickinglist',
 });
 
+PickingDetails.hasMany(PickingDetailProducts, {
+  foreignKey: 'pickingDetailId',
+  as: 'pickingdetailproducts',
+});
+
+export {
+  PickingLists as PickingListRelation,
+  PickingDetails as PickingDetailsRelation,
+};

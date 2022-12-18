@@ -6,18 +6,21 @@ import { checkToken } from './middleware';
 import { employeesRoutes } from './employees';
 import { attendanceRoute } from './attendance';
 import { partnerRoutes } from './partner';
+import { pickingListRoute } from './pickingList';
+import { pickingProductRoute } from './pickingProduct';
 const router = express.Router();
 
 router.use('/users', checkToken, usersRouter);
 router.use('/vehicles', checkToken, vehiclesRoutes);
 router.use('/employees', checkToken, employeesRoutes);
-router.use('/checkIn',checkToken, attendanceRoute)
-router.use('/partners',checkToken, partnerRoutes)
+router.use('/checkIn', checkToken, attendanceRoute);
+router.use('/partners', checkToken, partnerRoutes);
+router.use('/picking_lists', checkToken, pickingListRoute);
+router.use('/picking_products', checkToken, pickingProductRoute);
 router.use('/auth', authRouter);
 /* GET home page. */
-router.get("/", function (req, res) {
-  res.send({ title: "DFA API Services" });
+router.get('/', function (req, res) {
+  res.send({ title: 'DFA API Services' });
 });
-
 
 export { router as indexRouter };

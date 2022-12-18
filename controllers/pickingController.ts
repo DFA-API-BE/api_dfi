@@ -30,7 +30,11 @@ const getPickingLists = async (req: Request, res: Response) => {
         },
       ],
     });
-    const result: any = await dbConnection.query(
+    const result: Array<{
+      Id: number;
+      village: string;
+      countVillage: number;
+    }> = await dbConnection.query(
       `
     select pickingLists.Id, pickingDetails.village, COUNT(pickingDetails.village) as countVillage from pickingLists 
     join pickingDetails 
@@ -41,34 +45,20 @@ const getPickingLists = async (req: Request, res: Response) => {
         type: QueryTypes.SELECT,
       },
     );
-
-    // const newArray = data
-    //   .filter((el: any) => result.some((f: any) => f.Id === el.id))
-    //   .map((item: any) => ({
-    //     ...item,
-    //     village: result.find((f: any) => f.Id === item.id),
-    //   }));
-    data.reduce((acc: any, curr: any) => {
-      const item = result.find((f: any) => f.Id === curr.id);
-
-      const village: Array<any> = [];
-      if (item) {
-        village.push(item);
-
-        acc.push({
-          ...curr,
-          village: village,
-        });
-      }
-      return acc;
-    }, []);
-    // console.log(data);
+    
+    const newArray = data.map((pl)=>{
+      const villageList = result.filter(v => v.Id === pl.dataValues.id)
+      return ({
+        ...pl.dataValues,
+        village: villageList
+      })
+    })
 
     return responseHandler({
       res,
       statusCode: 200,
       message: 'Get Picking List',
-      data,
+      data: newArray,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {

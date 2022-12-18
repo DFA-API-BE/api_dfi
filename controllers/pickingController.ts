@@ -39,20 +39,21 @@ const getPickingLists = async (req: Request, res: Response) => {
     select pickingLists.Id, pickingDetails.village, COUNT(pickingDetails.village) as countVillage from pickingLists 
     join pickingDetails 
     on pickingLists.id =pickingDetails.pickingId
+    WHERE CAST(pickingLists.pickingDate AS DATE) = CAST(GETDATE() AS DATE)
     GROUP BY pickingLists.Id , pickingDetails.village
     order by pickingLists.Id ASC`,
       {
         type: QueryTypes.SELECT,
       },
     );
-    
-    const newArray = data.map((pl)=>{
-      const villageList = result.filter(v => v.Id === pl.dataValues.id)
-      return ({
+
+    const newArray = data.map((pl) => {
+      const villageList = result.filter((v) => v.Id === pl.dataValues.id);
+      return {
         ...pl.dataValues,
-        village: villageList
-      })
-    })
+        village: villageList,
+      };
+    });
 
     return responseHandler({
       res,

@@ -5,6 +5,12 @@ class PickingLists extends Model {}
 
 PickingLists.init(
   {
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      primaryKey: true
+    },
     pickingNumber: {
       type: DataTypes.STRING,
       unique: true,
@@ -36,7 +42,7 @@ PickingLists.init(
     warehouseFromId: {
       type: DataTypes.INTEGER,
     },
-    warehouseFromCo: {
+    warehouseFromCode: {
       type: DataTypes.STRING,
     },
     warehouseToId: {

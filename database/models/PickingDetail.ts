@@ -6,6 +6,12 @@ class PickingDetails extends Model {}
 
 PickingDetails.init(
   {
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      primaryKey: true
+    },
     pickingId: {
       type: DataTypes.INTEGER,
     },

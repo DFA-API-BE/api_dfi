@@ -6,16 +6,15 @@ import {
 import { responseHandler } from '../utils/responseHandler';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 import moment from 'moment-timezone';
-import { Op } from 'sequelize';
-import {
-  PickingDetailProducts,
-} from '../database/models/PickingDetailProduct';
+import { Op, QueryTypes } from 'sequelize';
+import { PickingDetailProducts } from '../database/models/PickingDetailProduct';
+import { dbConnection } from '../database/config/config';
 
 const getPickingLists = async (req: Request, res: Response) => {
   try {
     const data = await PickingListRelation.findAll({
       where: {
-        created_at: {
+        pickingDate: {
           [Op.gte]: moment().tz('Asia/Jakarta').startOf('day'),
           [Op.lte]: moment().tz('Asia/Jakarta').endOf('day'),
         },
@@ -31,6 +30,40 @@ const getPickingLists = async (req: Request, res: Response) => {
         },
       ],
     });
+    const result: any = await dbConnection.query(
+      `
+    select pickingLists.Id, pickingDetails.village, COUNT(pickingDetails.village) as countVillage from pickingLists 
+    join pickingDetails 
+    on pickingLists.id =pickingDetails.pickingId
+    GROUP BY pickingLists.Id , pickingDetails.village
+    order by pickingLists.Id ASC`,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    // const newArray = data
+    //   .filter((el: any) => result.some((f: any) => f.Id === el.id))
+    //   .map((item: any) => ({
+    //     ...item,
+    //     village: result.find((f: any) => f.Id === item.id),
+    //   }));
+    data.reduce((acc: any, curr: any) => {
+      const item = result.find((f: any) => f.Id === curr.id);
+
+      const village: Array<any> = [];
+      if (item) {
+        village.push(item);
+
+        acc.push({
+          ...curr,
+          village: village,
+        });
+      }
+      return acc;
+    }, []);
+    // console.log(data);
+
     return responseHandler({
       res,
       statusCode: 200,
@@ -43,12 +76,9 @@ const getPickingLists = async (req: Request, res: Response) => {
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.errors.map((err: any) => {
-        return `${err.value} is ${err.validatorKey}`;
-      }),
+      message: e.message,
     });
   }
 };
-
 
 export default { getPickingLists };

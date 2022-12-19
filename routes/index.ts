@@ -8,6 +8,7 @@ import { attendanceRoute } from './attendance';
 import { partnerRoutes } from './partner';
 import { pickingListRoute } from './pickingList';
 import { pickingProductRoute } from './pickingProduct';
+import { deliveryRoutes } from './delivery';
 import { partnerPickingAuthorizedRoute } from './partnerPickingAuthorized';
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use('/checkIn', checkToken, attendanceRoute);
 router.use('/partners', checkToken, partnerRoutes);
 router.use('/picking_lists', checkToken, pickingListRoute);
 router.use('/picking_products', checkToken, pickingProductRoute);
+router.use('/delivery',checkToken, deliveryRoutes);
 router.use('/partner_picking_authorized', checkToken, partnerPickingAuthorizedRoute);
 router.use('/auth', authRouter);
 /* GET home page. */

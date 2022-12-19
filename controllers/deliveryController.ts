@@ -22,6 +22,10 @@ const updateDeliveryDetailSchema = Joi.object().keys({
   tunai: Joi.number(),
   isLunas: Joi.boolean(),
 });
+const updateDeliveryDetailProductSchema = Joi.object().keys({
+  qtyTerima: Joi.number(),
+  qtyPartial: Joi.number(),
+});
 
 const getDeliveryList = async (req: Request, res: Response) => {
   const TODAY_START = new Date().setHours(0, 0, 0, 0);
@@ -211,8 +215,78 @@ const updateDeliveryDetail = async (
   }
 };
 
+const updateDeliveryDetailProduct = async (
+    req: Omit<
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Request<{ id: string }, never, any, never, Record<string, any>>,
+      'user'
+    > & {
+      user?: UserRequest;
+    },
+    res: Response,
+  ) => {
+    try {
+      const { name } = req.user as UserRequest;
+      const params = {
+        id: req.params.id,
+      };
+      const validationUpdateParams = updateParamsschema.validate(params);
+      if (validationUpdateParams.error) {
+        return responseHandler({
+          res,
+          message: validationUpdateParams.error.message,
+          statusCode: 400,
+        });
+      }
+      const validationUpdateDetailProductBody = updateDeliveryDetailProductSchema.validate(
+        req.body,
+      );
+      if (validationUpdateDetailProductBody.error) {
+        return responseHandler({
+          res,
+          message: validationUpdateDetailProductBody.error.message,
+          statusCode: 400,
+        });
+      }
+      const deliveryDetailProductData = await DeliveriesDetailProductRelation.findOne({
+        where: {
+          id: params.id,
+        },
+      });
+      if (deliveryDetailProductData === null) {
+        return responseHandler({
+          res,
+          message: 'data delivery product tidak ditemukan',
+          statusCode: 404,
+        });
+      } else {
+        await deliveryDetailProductData.update({
+          ...deliveryDetailProductData.dataValues,
+          ...req.body,
+          updatedBy: name,
+        });
+        return responseHandler({
+          res,
+          message: 'Update delivery detail Success!',
+          data: deliveryDetailProductData,
+        });
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      return responseHandler({
+        res: res,
+        statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: e.errors.map((err: any) => {
+          return `${err.value} is ${err.validatorKey}`;
+        }),
+      });
+    }
+  };
+
 export default {
   getDeliveryList,
   createDelivery,
   updateDeliveryDetail,
+  updateDeliveryDetailProduct
 };

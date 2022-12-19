@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import { dbConnection } from '../config/config';
-import { PartnerHelpers } from './PartnerHelper';
 
 class Users extends Model<{
   id?: number;
@@ -37,8 +36,5 @@ Users.init(
     modelName: 'Users',
   },
 );
-Users.hasMany(PartnerHelpers, {
-  foreignKey:'helperId',
-  as:'helpers'
-})
+
 export { Users };

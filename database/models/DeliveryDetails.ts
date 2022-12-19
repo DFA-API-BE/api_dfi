@@ -34,6 +34,9 @@ DeliveryDetails.init(
     isLunas: {
       type: DataTypes.INTEGER,
     },
+    sequence: {
+      type: DataTypes.INTEGER,
+    },
     createdBy: {
       type: DataTypes.STRING,
     },

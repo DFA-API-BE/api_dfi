@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Op } from 'sequelize';
 import { dbConnection } from '../database/config/config';
 import {
   DeliveriesDetailProductRelation,
@@ -15,22 +16,36 @@ const updateParamsschema = Joi.object().keys({
 });
 
 const getDeliveryList = async (req: Request, res: Response) => {
+  const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  const NOW = new Date();
   try {
+    const result = await DeliveriesDetailRelation.findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: TODAY_START,
+          [Op.lt]: NOW,
+        },
+      },
+      include: [
+        {
+            model: DeliveriesDetailProductRelation,
+        }
+      ]
+    });
     return responseHandler({
       res,
       statusCode: 200,
       message: `Get All Employees ${req.query.type} Success`,
-      data: [],
+      data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
+    console.log(e)
     return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.errors.map((err: any) => {
-        return `${err.value} is ${err.validatorKey}`;
-      }),
+      message: e,
     });
   }
 };
@@ -64,26 +79,36 @@ const createDelivery = async (
     const { name } = req.user as UserRequest;
     await dbConnection.transaction(async (t) => {
       for await (const delivery of req.body) {
-        const deliveryResult = await DeliveriesUserPickingRelations.create({
-          ...delivery,
-          createdBy: name,
-          updatedBy: name,
-        }, { transaction: t});
-        for await (const details of delivery.outlets) {
-          const detailsResult = await DeliveriesDetailRelation.create({
-            ...details,
-            deliveryId: deliveryResult.dataValues.id,
+        const deliveryResult = await DeliveriesUserPickingRelations.create(
+          {
+            ...delivery,
             createdBy: name,
             updatedBy: name,
-          }, { transaction: t});
-          for await (const products of details.products) {
-            await DeliveriesDetailProductRelation.create({
+          },
+          { transaction: t },
+        );
+        for await (const details of delivery.outlets) {
+            // harusnya ambil sequence dari PL
+          const detailsResult = await DeliveriesDetailRelation.create(
+            {
+              ...details,
               deliveryId: deliveryResult.dataValues.id,
-              deliveryDetailId: detailsResult.dataValues.id,
-              ...products,
               createdBy: name,
               updatedBy: name,
-            }, { transaction: t});
+            },
+            { transaction: t },
+          );
+          for await (const products of details.products) {
+            await DeliveriesDetailProductRelation.create(
+              {
+                deliveryId: deliveryResult.dataValues.id,
+                deliveryDetailId: detailsResult.dataValues.id,
+                ...products,
+                createdBy: name,
+                updatedBy: name,
+              },
+              { transaction: t },
+            );
           }
         }
       }
@@ -101,7 +126,10 @@ const createDelivery = async (
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.parent?.code === 'EREQUEST' ? "check your request" : "internal server error",
+      message:
+        e.parent?.code === 'EREQUEST'
+          ? 'check your request'
+          : 'internal server error',
     });
   }
 };

@@ -51,6 +51,9 @@ PickingLists.init(
     warehouseToCode: {
       type: DataTypes.STRING,
     },
+    imageListAuthorized: {
+      type: DataTypes.STRING,
+    },
     isAssign: {
       type: DataTypes.INTEGER,
     },

@@ -10,16 +10,28 @@ DeliveryDetails.init(
       allowNull: true,
       primaryKey: true,
     },
-    pickingId: {
+    deliveryId: {
       type: DataTypes.INTEGER,
     },
-    driverId: {
+    customerCode: {
+      type: DataTypes.STRING,
+    },
+    driverIdAuthorized: {
       type: DataTypes.INTEGER,
     },
-    reasonId: {
+    checkerIdAuthorized: {
       type: DataTypes.INTEGER,
     },
-    deliveryNumber: {
+    isSent: {
+      type: DataTypes.INTEGER,
+    },
+    claim: {
+      type: DataTypes.INTEGER,
+    },
+    tunai: {
+      type: DataTypes.INTEGER,
+    },
+    isLunas: {
       type: DataTypes.INTEGER,
     },
     createdBy: {

@@ -33,7 +33,7 @@ DeliveryDetails.hasMany(DeliveryDetailProducts, {
 })
 //DeliveriesDetailProductRelation
 DeliveryDetailProducts.belongsTo(Deliveries,{
-    foreignKey: 'pickingId'
+    foreignKey: 'deliveryId'
 })
 DeliveryDetailProducts.belongsTo(DeliveryDetails,{
     foreignKey: 'deliveryDetailid'

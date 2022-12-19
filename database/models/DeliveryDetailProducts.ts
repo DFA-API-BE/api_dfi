@@ -17,7 +17,7 @@ DeliveryDetailProducts.init(
       type: DataTypes.INTEGER,
     },
     productCode: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     qtyAfterCheck: {
       type: DataTypes.INTEGER,

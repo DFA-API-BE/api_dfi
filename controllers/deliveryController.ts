@@ -14,6 +14,14 @@ import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 const updateParamsschema = Joi.object().keys({
   id: Joi.number().required(),
 });
+const updateDeliveryDetailSchema = Joi.object().keys({
+  driverIdAuthorized: Joi.number(),
+  checkerIdAuthorized: Joi.number(),
+  isSent: Joi.number(),
+  claim: Joi.number(),
+  tunai: Joi.number(),
+  isLunas: Joi.boolean(),
+});
 
 const getDeliveryList = async (req: Request, res: Response) => {
   const TODAY_START = new Date().setHours(0, 0, 0, 0);
@@ -28,19 +36,19 @@ const getDeliveryList = async (req: Request, res: Response) => {
       },
       include: [
         {
-            model: DeliveriesDetailProductRelation,
-        }
-      ]
+          model: DeliveriesDetailProductRelation,
+        },
+      ],
     });
     return responseHandler({
       res,
       statusCode: 200,
-      message: `Get All Employees ${req.query.type} Success`,
+      message: `Get today outlet Success`,
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
     return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
@@ -88,7 +96,7 @@ const createDelivery = async (
           { transaction: t },
         );
         for await (const details of delivery.outlets) {
-            // harusnya ambil sequence dari PL
+          // harusnya ambil sequence dari PL
           const detailsResult = await DeliveriesDetailRelation.create(
             {
               ...details,
@@ -145,7 +153,7 @@ const updateDeliveryDetail = async (
   res: Response,
 ) => {
   try {
-    // const { name } = req.user as UserRequest;
+    const { name } = req.user as UserRequest;
     const params = {
       id: req.params.id,
     };
@@ -157,11 +165,39 @@ const updateDeliveryDetail = async (
         statusCode: 400,
       });
     }
-    return responseHandler({
-      res,
-      message: 'Update EMployee Success!',
-      data: [],
+    const validationUpdateDetailBody = updateDeliveryDetailSchema.validate(
+      req.body,
+    );
+    if (validationUpdateDetailBody.error) {
+      return responseHandler({
+        res,
+        message: validationUpdateDetailBody.error.message,
+        statusCode: 400,
+      });
+    }
+    const deliveryDetailData = await DeliveriesDetailRelation.findOne({
+      where: {
+        id: params.id,
+      },
     });
+    if (deliveryDetailData === null) {
+      return responseHandler({
+        res,
+        message: 'data delivery tidak ditemukan',
+        statusCode: 404,
+      });
+    } else {
+      await deliveryDetailData.update({
+        ...deliveryDetailData.dataValues,
+        ...req.body,
+        updatedBy: name,
+      });
+      return responseHandler({
+        res,
+        message: 'Update delivery detail Success!',
+        data: deliveryDetailData,
+      });
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({

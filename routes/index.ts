@@ -10,6 +10,7 @@ import { pickingListRoute } from './pickingList';
 import { pickingProductRoute } from './pickingProduct';
 import { deliveryRoutes } from './delivery';
 import { partnerPickingAuthorizedRoute } from './partnerPickingAuthorized';
+import { reasonRoute } from './reason';
 const router = express.Router();
 
 router.use('/users', checkToken, usersRouter);
@@ -22,6 +23,7 @@ router.use('/picking_products', checkToken, pickingProductRoute);
 router.use('/delivery',checkToken, deliveryRoutes);
 router.use('/partner_picking_authorized', checkToken, partnerPickingAuthorizedRoute);
 router.use('/auth', authRouter);
+router.use('/reasons', checkToken, reasonRoute)
 /* GET home page. */
 router.get('/', function (req, res) {
   res.send({ title: 'DFA API Services' });

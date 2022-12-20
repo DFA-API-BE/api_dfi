@@ -6,6 +6,7 @@ import {
   DeliveriesDetailProductRelation,
   DeliveriesDetailRelation,
   DeliveriesUserPickingRelations,
+  ProductDeliveryDetailRelation,
 } from '../database/models/relations/delivery';
 import { UserRequest } from '../domain/user';
 import { responseHandler } from '../utils/responseHandler';
@@ -42,6 +43,11 @@ const getDeliveryList = async (req: Request, res: Response) => {
       include: [
         {
           model: DeliveriesDetailProductRelation,
+          include: [
+            {
+              model: ProductDeliveryDetailRelation
+            }
+          ]
         },
       ],
     });

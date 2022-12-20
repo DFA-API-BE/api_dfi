@@ -21,6 +21,7 @@ const updateDeliveryDetailSchema = Joi.object().keys({
   claim: Joi.number(),
   tunai: Joi.number(),
   isLunas: Joi.boolean(),
+  paymentNumber: Joi.string()
 });
 const updateDeliveryDetailProductSchema = Joi.object().keys({
   qtyTerima: Joi.number(),

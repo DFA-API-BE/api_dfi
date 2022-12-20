@@ -10,7 +10,7 @@ const getReasonList = async (req: Request, res: Response) => {
     return responseHandler({
       res,
       statusCode: 200,
-      message: `Get today outlet Success`,
+      message: `Get reason list Success`,
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -16,6 +16,18 @@ DeliveryDetails.init(
     customerCode: {
       type: DataTypes.STRING,
     },
+    salesmanCode: {
+      type: DataTypes.STRING,
+    },
+    shipperNumber: {
+      type: DataTypes.STRING,
+    },
+    paymentNumber: {
+      type: DataTypes.STRING,
+    },
+    shipperDate: {
+      type: DataTypes.STRING,
+    },
     driverIdAuthorized: {
       type: DataTypes.INTEGER,
     },

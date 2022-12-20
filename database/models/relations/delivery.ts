@@ -3,6 +3,7 @@ import { DeliveryDetailProducts } from "../DeliveryDetailProducts";
 import { DeliveryDetails } from "../DeliveryDetails";
 import { PickingLists } from "../PickingList";
 import { Products } from "../Product";
+import { Reasons } from "../Reasons";
 import { Users } from "../Users";
 
 //DeliveriesUserPickingRelations
@@ -21,6 +22,12 @@ Deliveries.belongsTo(PickingLists, {
 PickingLists.hasOne(Deliveries, {
     foreignKey: 'pickingId'
 })
+PickingLists.belongsTo(Reasons,{
+    foreignKey: 'reasonId'
+})
+Reasons.hasMany(PickingLists,{
+    foreignKey: 'reasonId'
+})
 Users.hasMany(Deliveries, {
     foreignKey: 'driverId'
 })
@@ -31,6 +38,12 @@ DeliveryDetails.belongsTo(Deliveries,{
 })
 DeliveryDetails.hasMany(DeliveryDetailProducts, {
     foreignKey: 'deliveryDetailId'
+})
+DeliveryDetails.belongsTo(Reasons,{
+    foreignKey: 'reasonId'
+})
+Reasons.hasMany(DeliveryDetails,{
+    foreignKey: 'reasonId'
 })
 //DeliveriesDetailProductRelation
 DeliveryDetailProducts.belongsTo(Deliveries,{
@@ -45,4 +58,16 @@ DeliveryDetailProducts.belongsTo(Products,{
 Products.hasMany(DeliveryDetailProducts,{
     foreignKey: 'productCode'
 })
-export {Deliveries as DeliveriesUserPickingRelations, DeliveryDetails as DeliveriesDetailRelation, DeliveryDetailProducts as DeliveriesDetailProductRelation, Products as ProductDeliveryDetailRelation }
+DeliveryDetailProducts.belongsTo(Reasons,{
+    foreignKey: 'reasonId'
+})
+Reasons.hasMany(DeliveryDetailProducts,{
+    foreignKey: 'reasonId'
+})
+export {
+    Deliveries as DeliveriesUserPickingRelations, 
+    DeliveryDetails as DeliveriesDetailRelation, 
+    DeliveryDetailProducts as DeliveriesDetailProductRelation, 
+    Products as ProductDeliveryDetailRelation,
+    Reasons as ReasonDeliveryRelation
+}

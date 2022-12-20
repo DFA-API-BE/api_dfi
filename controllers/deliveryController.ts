@@ -7,6 +7,7 @@ import {
   DeliveriesDetailRelation,
   DeliveriesUserPickingRelations,
   ProductDeliveryDetailRelation,
+  ReasonDeliveryRelation,
 } from '../database/models/relations/delivery';
 import { UserRequest } from '../domain/user';
 import { responseHandler } from '../utils/responseHandler';
@@ -22,11 +23,13 @@ const updateDeliveryDetailSchema = Joi.object().keys({
   claim: Joi.number(),
   tunai: Joi.number(),
   isLunas: Joi.boolean(),
-  paymentNumber: Joi.string()
+  paymentNumber: Joi.string(),
+  reasonId: Joi.number(),
 });
 const updateDeliveryDetailProductSchema = Joi.object().keys({
   qtyTerima: Joi.number(),
   qtyPartial: Joi.number(),
+  reasonId: Joi.number(),
 });
 
 const getDeliveryList = async (req: Request, res: Response) => {
@@ -45,10 +48,16 @@ const getDeliveryList = async (req: Request, res: Response) => {
           model: DeliveriesDetailProductRelation,
           include: [
             {
-              model: ProductDeliveryDetailRelation
+              model: ProductDeliveryDetailRelation,
+            },
+            {
+              model: ReasonDeliveryRelation
             }
           ]
         },
+        {
+          model: ReasonDeliveryRelation
+        }
       ],
     });
     return responseHandler({

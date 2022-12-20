@@ -28,6 +28,9 @@ DeliveryDetailProducts.init(
     qtyPartial: {
       type: DataTypes.INTEGER,
     },
+    reasonId: {
+      type: DataTypes.INTEGER,
+    },
     createdBy: {
       type: DataTypes.STRING,
     },

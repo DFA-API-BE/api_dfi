@@ -16,6 +16,7 @@ import { Partners } from '../database/models/Partner';
 import { Vehicles } from '../database/models/Vehicles';
 import { PartnerHelpers } from '../database/models/PartnerHelper';
 import { dbConnection } from '../database/config/config';
+import { PickingLists } from '../database/models/PickingList';
 
 const pickingAuthorizedSchema = Joi.object().keys({
   image: Joi.string(),
@@ -238,6 +239,10 @@ const getDispatchNote = async (
             },
           ],
         },
+        {
+          model: PickingLists,
+          as: 'picking_list',
+        },
       ],
     });
     const result: Array<{
@@ -257,7 +262,9 @@ const getDispatchNote = async (
     );
 
     const newArray = data.map((pl) => {
-      const villageList = result.filter((v) => v.Id === pl.dataValues.pickingListId);
+      const villageList = result.filter(
+        (v) => v.Id === pl.dataValues.pickingListId,
+      );
       return {
         ...pl.dataValues,
         village: villageList,

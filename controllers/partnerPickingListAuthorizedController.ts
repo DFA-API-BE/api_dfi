@@ -9,6 +9,13 @@ import { responseHandler } from '../utils/responseHandler';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 import { PartnerPickingListAuthorizedsRelation } from '../database/models/relations/PartnerPickingAuthorized';
 import { Users } from '../database/models/Users';
+import { Op } from 'sequelize';
+import moment from 'moment';
+import { UsersRelation } from '../database/models/relations/user';
+import { Partners } from '../database/models/Partner';
+import { Vehicles } from '../database/models/Vehicles';
+import { PartnerHelpers } from '../database/models/PartnerHelper';
+import { PickingLists } from '../database/models/PickingList';
 
 const pickingAuthorizedSchema = Joi.object().keys({
   image: Joi.string(),
@@ -60,7 +67,9 @@ const getPartnerPickingAuthorized = async (
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.message,
+      message: e.errors.map((err: any) => {
+        return `${err.value} is ${err.validatorKey}`;
+      }),
     });
   }
 };
@@ -91,7 +100,6 @@ const storePickingAuthorized = async (
         statusCode: 400,
       });
     }
-    console.log(req.body);
 
     const pickingAuthorized = await PartnerPickingListAuthorizeds.create({
       ...req.body,
@@ -177,8 +185,83 @@ const updatePickingAuthorized = async (
     });
   }
 };
+
+const getDispatchNote = async (
+  req: Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Request<never, never, never, never, Record<string, any>>,
+    'user'
+  > & {
+    user?: UserRequest;
+  },
+  res: Response,
+) => {
+  try {
+    const { id } = req.user as UserRequest;
+    const data = await PartnerPickingListAuthorizedsRelation.findAll({
+      where: {
+        createdAt: {
+          [Op.gte]: moment().tz('Asia/Jakarta').startOf('day'),
+          [Op.lte]: moment().tz('Asia/Jakarta').endOf('day'),
+        },
+        driverId: id,
+      },
+      include: [
+        {
+          model: UsersRelation,
+          as: 'driver',
+          attributes: ['name'],
+          include: [
+            {
+              model: Partners,
+              as: 'partners',
+              attributes: ['id', 'driverId', 'vehicleId'],
+              include: [
+                {
+                  model: Vehicles,
+                  as: 'vehicle',
+                  attributes: ['code'],
+                },
+                {
+                  model: PartnerHelpers,
+                  as: 'helpers',
+                  attributes: ['id', 'partnerId', 'helperId'],
+                  include: [
+                    {
+                      model: Users,
+                      as: 'helper',
+                      attributes: ['name'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: PickingLists,
+          as: 'picking_list',
+        },
+      ],
+    });
+    return responseHandler({
+      res,
+      statusCode: 200,
+      message: 'Get Dispatch Note',
+      data,
+    });
+  } catch (e: any) {
+    return responseHandler({
+      res: res,
+      statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message: e.message,
+    });
+  }
+};
 export default {
   storePickingAuthorized,
   updatePickingAuthorized,
   getPartnerPickingAuthorized,
+  getDispatchNote,
 };

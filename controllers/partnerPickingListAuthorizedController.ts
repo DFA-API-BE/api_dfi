@@ -9,13 +9,13 @@ import { responseHandler } from '../utils/responseHandler';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 import { PartnerPickingListAuthorizedsRelation } from '../database/models/relations/PartnerPickingAuthorized';
 import { Users } from '../database/models/Users';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import moment from 'moment';
 import { UsersRelation } from '../database/models/relations/user';
 import { Partners } from '../database/models/Partner';
 import { Vehicles } from '../database/models/Vehicles';
 import { PartnerHelpers } from '../database/models/PartnerHelper';
-import { PickingLists } from '../database/models/PickingList';
+import { dbConnection } from '../database/config/config';
 
 const pickingAuthorizedSchema = Joi.object().keys({
   image: Joi.string(),
@@ -238,17 +238,36 @@ const getDispatchNote = async (
             },
           ],
         },
-        {
-          model: PickingLists,
-          as: 'picking_list',
-        },
       ],
+    });
+    const result: Array<{
+      Id: number;
+      village: string;
+    }> = await dbConnection.query(
+      `
+    select pickingLists.Id, pickingDetails.village from pickingLists 
+    join pickingDetails 
+    on pickingLists.id =pickingDetails.pickingId
+    WHERE CAST(pickingLists.pickingDate AS DATE) = CAST(GETDATE() AS DATE)
+    GROUP BY pickingLists.Id , pickingDetails.village
+    order by pickingLists.Id ASC`,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    const newArray = data.map((pl) => {
+      const villageList = result.filter((v) => v.Id === pl.dataValues.pickingListId);
+      return {
+        ...pl.dataValues,
+        village: villageList,
+      };
     });
     return responseHandler({
       res,
       statusCode: 200,
       message: 'Get Dispatch Note',
-      data,
+      data: newArray,
     });
   } catch (e: any) {
     return responseHandler({

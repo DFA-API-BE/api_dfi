@@ -22,10 +22,10 @@ Deliveries.belongsTo(PickingLists, {
 PickingLists.hasOne(Deliveries, {
     foreignKey: 'pickingId'
 })
-PickingLists.belongsTo(Reasons,{
+Deliveries.belongsTo(Reasons,{
     foreignKey: 'reasonId'
 })
-Reasons.hasMany(PickingLists,{
+Reasons.hasMany(Deliveries,{
     foreignKey: 'reasonId'
 })
 Users.hasMany(Deliveries, {

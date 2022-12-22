@@ -11,6 +11,7 @@ import { pickingProductRoute } from './pickingProduct';
 import { deliveryRoutes } from './delivery';
 import { partnerPickingAuthorizedRoute } from './partnerPickingAuthorized';
 import { reasonRoute } from './reason';
+import { PaymentRoutes } from './payment';
 const router = express.Router();
 
 router.use('/users', checkToken, usersRouter);
@@ -22,6 +23,7 @@ router.use('/picking_lists', checkToken, pickingListRoute);
 router.use('/picking_products', checkToken, pickingProductRoute);
 router.use('/delivery',checkToken, deliveryRoutes);
 router.use('/partner_picking_authorized', checkToken, partnerPickingAuthorizedRoute);
+router.use('/payments', checkToken, PaymentRoutes);
 router.use('/auth', authRouter);
 router.use('/reasons', checkToken, reasonRoute)
 /* GET home page. */

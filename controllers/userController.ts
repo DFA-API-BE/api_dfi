@@ -3,6 +3,9 @@ import { Users } from '../database/models/Users';
 import { UserRequest } from '../domain/user';
 import { responseHandler } from '../utils/responseHandler';
 import { statusCodeRenderer } from '../utils/statusCodeRenderer';
+import { PartnersRelation, VehiclePartnerRelation } from '../database/models/relations/partner';
+import { PartnerHelpers } from '../database/models/PartnerHelper';
+import { UsersRelation } from '../database/models/relations/user';
 
 const getUser = async (
   req: Omit<
@@ -22,6 +25,29 @@ const getUser = async (
         id:id,
       },
       attributes: { exclude: ['password'] },
+      include: [
+        {
+          model: PartnersRelation,
+          as: 'partners',
+          include: [
+            {
+              model:  VehiclePartnerRelation,
+              as: 'vehicle'
+            },
+            {
+              model: PartnerHelpers,
+              as: 'helpers',
+              include: [
+                {
+                  model: UsersRelation,
+                  as: 'helper',
+                  attributes: { exclude: ['password'] },
+                }
+              ]
+            }
+          ]
+        }
+      ]
     });
 
     return responseHandler({

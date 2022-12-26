@@ -13,6 +13,7 @@ import { partnerPickingAuthorizedRoute } from './partnerPickingAuthorized';
 import { reasonRoute } from './reason';
 import { PaymentRoutes } from './payment';
 import { deliveryAuthorizedRoute } from './deliveryAuthorized';
+import { reportingRoute } from './reporting';
 const router = express.Router();
 
 router.use('/users', checkToken, usersRouter);
@@ -28,6 +29,7 @@ router.use('/delivery_authorized', checkToken, deliveryAuthorizedRoute);
 router.use('/payments', checkToken, PaymentRoutes);
 router.use('/auth', authRouter);
 router.use('/reasons', checkToken, reasonRoute)
+router.use('/report', checkToken, reportingRoute)
 /* GET home page. */
 router.get('/', function (req, res) {
   res.send({ title: 'DFA API Services' });

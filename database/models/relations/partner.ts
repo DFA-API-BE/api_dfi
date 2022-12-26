@@ -16,5 +16,9 @@ Partners.hasMany(PartnerHelpers,{
   as:'helpers'
 });
 
+Vehicles.hasMany(Partners, {
+  foreignKey: 'vehicleId'
+})
 
-export {Partners as PartnersRelation}
+
+export {Partners as PartnersRelation, Vehicles as VehiclePartnerRelation}

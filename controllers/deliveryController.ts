@@ -30,6 +30,7 @@ const updateDeliveryDetailProductSchema = Joi.object().keys({
   qtyTerima: Joi.number(),
   qtyPartial: Joi.number(),
   reasonId: Joi.number(),
+  qtyActualAfterDelivery: Joi.number(),
 });
 
 const getDeliveryList = async (req: Request, res: Response) => {

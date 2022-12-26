@@ -25,6 +25,9 @@ DeliveryDetailProducts.init(
     qtyTerima: {
       type: DataTypes.INTEGER,
     },
+    qtyActualAfterDelivery: {
+      type: DataTypes.INTEGER,
+    },
     qtyPartial: {
       type: DataTypes.INTEGER,
     },

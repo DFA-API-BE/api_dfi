@@ -76,7 +76,7 @@ const getDeliveryList = async (
       res,
       statusCode: 200,
       message: `Get today outlet Success`,
-      data: result?.dataValues.DeliveryDetails,
+      data: result?.dataValues.DeliveryDetails ?? [],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {

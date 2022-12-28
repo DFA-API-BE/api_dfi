@@ -116,12 +116,13 @@ const createDelivery = async (
   res: Response,
 ) => {
   try {
-    const { name } = req.user as UserRequest;
+    const { name, id } = req.user as UserRequest;
     await dbConnection.transaction(async (t) => {
       for await (const delivery of req.body) {
         const deliveryResult = await DeliveriesUserPickingRelations.create(
           {
             ...delivery,
+            driverId: id,
             createdBy: name,
             updatedBy: name,
           },

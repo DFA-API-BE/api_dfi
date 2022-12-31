@@ -28,6 +28,9 @@ DeliveryDetails.init(
     shipperDate: {
       type: DataTypes.STRING,
     },
+    imageDelivery: {
+      type: DataTypes.STRING,
+    },
     driverIdAuthorized: {
       type: DataTypes.INTEGER,
     },

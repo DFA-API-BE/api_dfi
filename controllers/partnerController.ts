@@ -16,12 +16,12 @@ const partnerSchema = Joi.object().keys({
 });
 const partnerUpdateSchema = Joi.object().keys({
   helpers: Joi.array().min(1),
-  vehicleId: Joi.number().integer()
+  vehicleId: Joi.number().integer(),
 });
 
 const updateParamsschema = Joi.object().keys({
-  id: Joi.number().required()
-})
+  id: Joi.number().required(),
+});
 
 const getPartner = async (
   req: Omit<
@@ -54,7 +54,7 @@ const getPartner = async (
         {
           model: Users,
           as: 'driver',
-          attributes: ['name','profilePic'],
+          attributes: ['name', 'profilePic'],
         },
         {
           model: Vehicles,
@@ -69,15 +69,13 @@ const getPartner = async (
       message: 'Get Detail Partner',
       data,
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.errors.map((err: any) => {
-        return `${err.value} is ${err.validatorKey}`;
-      }),
+      message: e.message,
     });
   }
 };
@@ -120,7 +118,7 @@ const storePartners = async (
       message: 'Create Partner Success!',
       data: storePartner,
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,
@@ -145,8 +143,8 @@ const updatePartner = async (
 ) => {
   try {
     const params = {
-      id: parseInt(req.params.id)
-    }
+      id: parseInt(req.params.id),
+    };
     const validationPartnerSchema = partnerUpdateSchema.validate(req.body);
     if (validationPartnerSchema.error) {
       return responseHandler({
@@ -157,12 +155,12 @@ const updatePartner = async (
     }
     // const id: string = req.params.id;
     const validationUpdateParams = updateParamsschema.validate(params);
-    if(validationUpdateParams.error){
+    if (validationUpdateParams.error) {
       return responseHandler({
         res,
         message: validationUpdateParams.error.message,
-        statusCode: 400
-      })
+        statusCode: 400,
+      });
     }
 
     const partner = await Partners.findOne({
@@ -195,7 +193,7 @@ const updatePartner = async (
       message: 'Update Partner Success!',
       data: partner,
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return responseHandler({
       res: res,

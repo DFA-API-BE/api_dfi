@@ -22,7 +22,7 @@ const pickingAuthorizedSchema = Joi.object().keys({
   image: Joi.string(),
   checkerAuthorizationAt: Joi.string(),
   driverAuthorizationAt: Joi.string(),
-  pickingListId: Joi.number(),
+  pickingListId: Joi.array(),
   driverId: Joi.number(),
   checkerId: Joi.number(),
   isAuthorization: Joi.number(),
@@ -101,10 +101,16 @@ const storePickingAuthorized = async (
         statusCode: 400,
       });
     }
-
-    const pickingAuthorized = await PartnerPickingListAuthorizeds.create({
-      ...req.body,
+    const { pickingListId, ...storePicking } = req.body;
+    
+    const data: Array<any> = [];
+    pickingListId.forEach((e) => {
+      data.push({
+        pickingListId: e,
+        ...storePicking
+      });
     });
+    const pickingAuthorized = await PartnerPickingListAuthorizeds.bulkCreate(data);
     return responseHandler({
       res,
       message: 'Create Partner Picking Authorized Success!',

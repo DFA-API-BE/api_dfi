@@ -2,8 +2,8 @@ import { DataTypes, Model } from 'sequelize';
 import { dbConnection } from '../config/config';
 
 export type PartnerPickingAuthorizedData = {
+  pickingListId: Array<number>;
   image: string;
-  pickingListId: number;
   partnerId: number;
   checkerId: number;
   checkerAuthorizationAt: string;

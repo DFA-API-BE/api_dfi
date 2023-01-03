@@ -121,9 +121,7 @@ const storePickingAuthorized = async (
       res: res,
       statusCode: statusCodeRenderer(e.parent?.code ?? 'EREQUEST'),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: e.errors.map((err: any) => {
-        return `${err.value} is ${err.validatorKey}`;
-      }),
+      message: e.message
     });
   }
 };

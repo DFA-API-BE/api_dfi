@@ -44,7 +44,7 @@ const getPartnerPickingAuthorized = async (
   try {
     const { id } = req.user as UserRequest;
 
-    const data = await PartnerPickingListAuthorizedsRelation.findOne({
+    const data = await PartnerPickingListAuthorizedsRelation.findAll({
       where: {
         driverId: id,
       },

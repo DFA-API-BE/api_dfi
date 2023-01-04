@@ -3,6 +3,7 @@ import Joi from 'joi';
 import { Op } from 'sequelize';
 import { dbConnection } from '../database/config/config';
 import {
+  CustomerDeliveryRelation,
   DeliveriesDetailProductRelation,
   DeliveriesDetailRelation,
   DeliveriesUserPickingRelations,
@@ -60,6 +61,9 @@ const getDeliveryList = async (
             {
               model: ReasonDeliveryRelation,
             },
+            {
+              model: CustomerDeliveryRelation
+            }
           ],
         },
       ],

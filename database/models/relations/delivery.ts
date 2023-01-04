@@ -1,3 +1,4 @@
+import { Customers } from "../Customer";
 import { Deliveries } from "../Deliveries";
 import { DeliveryDetailProducts } from "../DeliveryDetailProducts";
 import { DeliveryDetails } from "../DeliveryDetails";
@@ -76,29 +77,22 @@ ProductUOMs.belongsTo(Products,{
     foreignKey: 'ProductID',
     targetKey: 'ProductID',
 })
-// DeliveryDetailProducts.hasMany(ProductUOMs,{
-//     sourceKey: 'uom',
-//     foreignKey:'UOM',
-// })
-// ProductUOMs.belongsTo(DeliveryDetailProducts, {
-//     foreignKey:'UOM',
-//     targetKey: 'uom'
-// })
 ProductUOMs.hasMany(ProductPriceCurrents,{
     foreignKey: 'ProductUOMID'
 })
 ProductPriceCurrents.belongsTo(ProductUOMs,{
     foreignKey: 'ProductUOMID'
 })
-// DeliveryDetails.belongsTo(ProductPriceCurrents,{
-//     foreignKey: 'channelId',
-//     targetKey: 'ChannelID'
-// })
-// ProductPriceCurrents.hasMany(DeliveryDetails,{
-//     sourceKey: 'ChannelID',
-//     foreignKey: 'channelId',
-// })
 
+//customer detaildelivery
+Customers.hasMany(DeliveryDetails,{
+    sourceKey: 'customerCode',
+    foreignKey: 'customerCode'
+})
+DeliveryDetails.belongsTo(Customers,{
+    foreignKey: 'customerCode',
+    targetKey: 'customerCode'
+})
 export {
     Deliveries as DeliveriesUserPickingRelations, 
     DeliveryDetails as DeliveriesDetailRelation, 
@@ -106,5 +100,6 @@ export {
     Products as ProductDeliveryDetailRelation,
     Reasons as ReasonDeliveryRelation,
     ProductUOMs as ProductUOMRelation,
-    ProductPriceCurrents as ProductPriceCurrentRelation
+    ProductPriceCurrents as ProductPriceCurrentRelation,
+    Customers as CustomerDeliveryRelation
 }

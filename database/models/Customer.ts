@@ -7,6 +7,7 @@ Customers.init(
   {
     customerCode: {
       type: DataTypes.STRING,
+      primaryKey: true
     },
     typeBussines: {
       type: DataTypes.STRING,

@@ -10,7 +10,7 @@ import { statusCodeRenderer } from '../utils/statusCodeRenderer';
 
 const pickingUpdateSchema = Joi.object().keys({
   productName: Joi.string(),
-  UOMSmallestSell: Joi.number(),
+  UOMSmallestSell: Joi.string(),
   isiKoliSmallestSell: Joi.number(),
   qtySmallReal: Joi.number(),
   qtyBig: Joi.number(),

@@ -3,7 +3,7 @@ import { dbConnection } from '../config/config';
 
 export type PickingDetailProductData = {
   productName: string,
-  UOMSmallestSell: number,
+  UOMSmallestSell: string,
   isiKoliSmallestSell: number,
   qtySmallReal: number,
   qtyBig: number,
@@ -32,7 +32,7 @@ PickingDetailProducts.init(
       type: DataTypes.STRING,
     },
     UOMSmallestSell: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     isiKoliSmallestSell: {
       type: DataTypes.INTEGER,

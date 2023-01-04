@@ -34,6 +34,9 @@ DeliveryDetailProducts.init(
     reasonId: {
       type: DataTypes.INTEGER,
     },
+    uom: {
+      type: DataTypes.STRING,
+    },
     createdBy: {
       type: DataTypes.STRING,
     },

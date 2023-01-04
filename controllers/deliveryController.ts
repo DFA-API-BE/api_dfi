@@ -7,6 +7,8 @@ import {
   DeliveriesDetailRelation,
   DeliveriesUserPickingRelations,
   ProductDeliveryDetailRelation,
+  ProductPriceCurrentRelation,
+  ProductUOMRelation,
   ReasonDeliveryRelation,
 } from '../database/models/relations/delivery';
 import { UserRequest } from '../domain/user';
@@ -60,6 +62,16 @@ const getDeliveryList = async (
               include: [
                 {
                   model: ProductDeliveryDetailRelation,
+                  include: [
+                    {
+                      model: ProductUOMRelation,
+                      include: [
+                        {
+                          model: ProductPriceCurrentRelation,
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   model: ReasonDeliveryRelation,

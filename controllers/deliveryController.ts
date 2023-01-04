@@ -7,6 +7,8 @@ import {
   DeliveriesDetailRelation,
   DeliveriesUserPickingRelations,
   ProductDeliveryDetailRelation,
+  ProductPriceCurrentRelation,
+  ProductUOMRelation,
   ReasonDeliveryRelation,
 } from '../database/models/relations/delivery';
 import { UserRequest } from '../domain/user';
@@ -56,13 +58,34 @@ const getDeliveryList = async (
           model: DeliveriesDetailRelation,
           include: [
             {
-              model: DeliveriesDetailProductRelation,
+              model: ReasonDeliveryRelation,
+            },
+          ],
+        },
+      ],
+    });
+
+    const newResponse = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result?.dataValues.DeliveryDetails.map(async (v: any) => {
+        const DeliveryDetailProducts = await DeliveriesDetailProductRelation.findAll({
+          where: {
+            deliveryDetailId: v.dataValues.id,
+          },
+          include: [
+            {
+              model: ProductDeliveryDetailRelation,
               include: [
                 {
-                  model: ProductDeliveryDetailRelation,
-                },
-                {
-                  model: ReasonDeliveryRelation,
+                  model: ProductUOMRelation,
+                  include: [
+                    {
+                      model: ProductPriceCurrentRelation,
+                      where: {
+                        ChannelID: v.dataValues.channelId
+                      }
+                    },
+                  ],
                 },
               ],
             },
@@ -70,14 +93,15 @@ const getDeliveryList = async (
               model: ReasonDeliveryRelation,
             },
           ],
-        },
-      ],
-    });
+        });
+        return { ...v.dataValues, DeliveryDetailProducts };
+      }),
+    );
     return responseHandler({
       res,
       statusCode: 200,
       message: `Get today outlet Success`,
-      data: result?.dataValues.DeliveryDetails ?? [],
+      data: newResponse ?? [],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {

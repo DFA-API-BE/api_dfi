@@ -55,6 +55,9 @@ DeliveryDetails.init(
     reasonId: {
       type: DataTypes.INTEGER,
     },
+    channelId: {
+      type: DataTypes.INTEGER,
+    },
     createdBy: {
       type: DataTypes.STRING,
     },

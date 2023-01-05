@@ -71,7 +71,7 @@ const getDeliveryList = async (
 
     const newResponse = await Promise.all(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      result?.dataValues.DeliveryDetails.map(async (v: any) => {
+      result?.dataValues?.DeliveryDetails?.map(async (v: any) => {
         const DeliveryDetailProducts = await DeliveriesDetailProductRelation.findAll({
           where: {
             deliveryDetailId: v.dataValues.id,
@@ -99,7 +99,7 @@ const getDeliveryList = async (
           ],
         });
         return { ...v.dataValues, DeliveryDetailProducts };
-      }),
+      }) ?? [],
     );
     return responseHandler({
       res,

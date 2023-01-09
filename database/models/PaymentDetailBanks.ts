@@ -15,6 +15,11 @@ class PaymentDetailBanks extends Model {}
 
 PaymentDetailBanks.init(
   {
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
     paymentId: {
       type: DataTypes.INTEGER,
     },

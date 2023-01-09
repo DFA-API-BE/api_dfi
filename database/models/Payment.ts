@@ -23,6 +23,11 @@ class Payments extends Model {}
 
 Payments.init(
   {
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
     paymentNumber: {
       type: DataTypes.STRING,
     },

@@ -45,30 +45,35 @@ const getTodayReport = async (
         },
       ],
     });
-
-    const newReporting = await Promise.all(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      reporting?.dataValues.DeliveryDetails.map(async (ship: any) => {
-        const payment = await PaymentsRelation.findOne({
-          where: {
-            shipperNumber: ship.shipperNumber,
-          },
-        });
+    let newReporting:any;
+    if (reporting && reporting.dataValues.DeliveryDetails) {
+      newReporting = await Promise.all(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ship.DeliveryDetailProducts.forEach((product: any) => {
-          totalGap += product.qtyActualAfterDelivery ?? 0;
-        });
-        delete ship.dataValues.DeliveryDetailProducts;
-        // console.log('payment baru', payment);
-        totalGiro += payment?.dataValues.giro;
-        totalNominal += payment?.dataValues.grandTotal;
-        totalRetur += payment?.dataValues.retur;
-        totalTunai += payment?.dataValues.cash;
-        return { ...ship.dataValues, payment: payment?.dataValues };
-      }),
-    );
-
-    delete reporting?.dataValues.DeliveryDetails;
+        reporting.dataValues.DeliveryDetails.map(async (ship: any) => {
+          const payment = await PaymentsRelation.findOne({
+            where: {
+              shipperNumber: ship.shipperNumber,
+            },
+          });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ship.DeliveryDetailProducts.forEach((product: any) => {
+            totalGap += product.qtyActualAfterDelivery ?? 0;
+          });
+          delete ship.dataValues.DeliveryDetailProducts;
+          // console.log('payment baru', payment);
+          totalGiro += payment?.dataValues.giro;
+          totalNominal += payment?.dataValues.grandTotal;
+          totalRetur += payment?.dataValues.retur;
+          totalTunai += payment?.dataValues.cash;
+          return { ...ship.dataValues, payment: payment?.dataValues };
+        }),
+      );
+      delete reporting.dataValues.DeliveryDetails;
+    }else{
+      newReporting = []
+    }
+    
+    
     return responseHandler({
       res,
       statusCode: 200,
@@ -76,7 +81,7 @@ const getTodayReport = async (
       data: {
         delivery: reporting,
         deliveryDetail: newReporting,
-        totalCustomer: newReporting.length,
+        totalCustomer: newReporting ? newReporting.length : 0,
         totalCredit,
         totalGap,
         totalGiro,

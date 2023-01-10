@@ -46,7 +46,7 @@ const getTodayReport = async (
       ],
     });
     let newReporting:any;
-    if (reporting) {
+    if (reporting && reporting.dataValues.DeliveryDetails) {
       newReporting = await Promise.all(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         reporting.dataValues.DeliveryDetails.map(async (ship: any) => {
@@ -69,6 +69,8 @@ const getTodayReport = async (
         }),
       );
       delete reporting.dataValues.DeliveryDetails;
+    }else{
+      newReporting = []
     }
     
     
